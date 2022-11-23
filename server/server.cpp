@@ -6,7 +6,7 @@
 using namespace std;
 #define PORT 9090
 struct sockaddr_in srv, clnt;
-double eval(string expr) //im the biggest problem solver 
+double eval(string expr) 
 {
   string xxx; // Get Rid of Spaces
   for (int i = 0; i < expr.length(); i++)
@@ -43,7 +43,6 @@ double eval(string expr) //im the biggest problem solver
         token += xxx[i];
         i++;
       }
-      // cout << "(" << token << ")" << " == " << to_string(eval(token)) <<  endl;
       tok += to_string(eval(token));
     }
     tok += xxx[i];
@@ -53,12 +52,10 @@ double eval(string expr) //im the biggest problem solver
   {
     if (tok[i] == '+')
     {
-      // cout << tok.substr(0, i) + " + " +  tok.substr(i+1, tok.length()-i-1) << " == " << eval(tok.substr(0, i)) + eval(tok.substr(i+1, tok.length()-i-1)) << endl;
       return eval(tok.substr(0, i)) + eval(tok.substr(i + 1, tok.length() - i - 1));
     }
     else if (tok[i] == '-')
     {
-      // cout << tok.substr(0, i) + " - " +  tok.substr(i+1, tok.length()-i-1) << " == " << eval(tok.substr(0, i)) - eval(tok.substr(i+1, tok.length()-i-1)) << endl;
       return eval(tok.substr(0, i)) - eval(tok.substr(i + 1, tok.length() - i - 1));
     }
   }
@@ -67,17 +64,14 @@ double eval(string expr) //im the biggest problem solver
   {
     if (tok[i] == '*')
     {
-      // cout << tok.substr(0, i) + " * " +  tok.substr(i+1, tok.length()-i-1) << " == " << eval(tok.substr(0, i)) * eval(tok.substr(i+1, tok.length()-i-1)) << endl;
       return eval(tok.substr(0, i)) * eval(tok.substr(i + 1, tok.length() - i - 1));
     }
     else if (tok[i] == '/')
     {
-      // cout << tok.substr(0, i) + " / " +  tok.substr(i+1, tok.length()-i-1) << " == " << eval(tok.substr(0, i)) / eval(tok.substr(i+1, tok.length()-i-1)) << endl;
       return eval(tok.substr(0, i)) / eval(tok.substr(i + 1, tok.length() - i - 1));
     }
   }
 
-  // cout << stod(tok.c_str()) << endl;
   return stod(tok.c_str()); // Return the value...
 }
 int main()
@@ -144,15 +138,14 @@ int main()
       printf("Read failed\n");
       return EXIT_FAILURE;
     }
-    system("color 0a");
+    system("color 0c");
     n = eval(buffer);
     cout << "The Answer is : " << n << endl; // output
     string s = to_string(n);
     memset(buffer, '\0', 255);
-    strcpy(buffer,s.c_str());
-    n = send(newsockfd,buffer,strlen(buffer),0);
+    strcpy(buffer, s.c_str());
+    n = send(newsockfd, buffer, strlen(buffer), 0);
     memset(buffer, '\0', 255);
-
   }
   closesocket(sockfd);
   closesocket(newsockfd);
