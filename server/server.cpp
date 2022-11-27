@@ -6,7 +6,7 @@
 using namespace std;
 #define PORT 9090
 struct sockaddr_in srv, clnt;
-double eval(string expr) 
+double eval(string expr)
 {
   string xxx; // Get Rid of Spaces
   for (int i = 0; i < expr.length(); i++)
@@ -43,7 +43,7 @@ double eval(string expr)
         token += xxx[i];
         i++;
       }
-      tok += to_string(eval(token));
+      tok += to_string(eval(token)); // calling recursive function
     }
     tok += xxx[i];
   }
@@ -52,11 +52,12 @@ double eval(string expr)
   {
     if (tok[i] == '+')
     {
-      return eval(tok.substr(0, i)) + eval(tok.substr(i + 1, tok.length() - i - 1));
+      return eval(tok.substr(0, i)) + eval(tok.substr(i + 1, tok.length() - i - 1)); // calling recursive function
     }
     else if (tok[i] == '-')
     {
-      return eval(tok.substr(0, i)) - eval(tok.substr(i + 1, tok.length() - i - 1));
+      if (tok.substr(0, i).length() != 0 && tok[i - 1] != '*' && tok[i - 1] != '/')
+        return eval(tok.substr(0, i)) + eval("-" + tok.substr(i + 1, tok.length() - i - 1)); // calling recursive function
     }
   }
 
@@ -64,11 +65,11 @@ double eval(string expr)
   {
     if (tok[i] == '*')
     {
-      return eval(tok.substr(0, i)) * eval(tok.substr(i + 1, tok.length() - i - 1));
+      return eval(tok.substr(0, i)) * eval(tok.substr(i + 1, tok.length() - i - 1)); // calling recursive function
     }
     else if (tok[i] == '/')
     {
-      return eval(tok.substr(0, i)) / eval(tok.substr(i + 1, tok.length() - i - 1));
+      return eval(tok.substr(0, i)) / eval(tok.substr(i + 1, tok.length() - i - 1)); // calling recursive function
     }
   }
 
@@ -100,12 +101,9 @@ int main()
     printf("Server started\n");
   }
 
-  // bzero((char*)&srv,sizeof(srv));
-
   srv.sin_family = AF_INET;
   srv.sin_port = htons(PORT);
   srv.sin_addr.s_addr = INADDR_ANY;
-  // memset(&srv.sin_zero,0,sizeof(srv.sin_zero));
 
   nStatus = bind(sockfd, (struct sockaddr *)&srv, sizeof(srv));
   if (nStatus < 0)
@@ -138,16 +136,21 @@ int main()
       printf("Read failed\n");
       return EXIT_FAILURE;
     }
+    if (!strncmp(buffer, "NO", 2)) // comparing string to terminate
+    {
+      cout << "Terminated" << endl;
+      break;
+    }
     system("color 0c");
     n = eval(buffer);
-    cout << "The Answer is : " << n << endl; // output
+    cout << "The Answer is : " << n << endl; // output printing
     string s = to_string(n);
     memset(buffer, '\0', 255);
     strcpy(buffer, s.c_str());
     n = send(newsockfd, buffer, strlen(buffer), 0);
     memset(buffer, '\0', 255);
   }
-  closesocket(sockfd);
-  closesocket(newsockfd);
+  closesocket(sockfd);    // closing socket
+  closesocket(newsockfd); // closing socket
   return 0;
 }

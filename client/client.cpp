@@ -27,7 +27,7 @@ int main()
 	srv.sin_family = AF_INET;
 	srv.sin_port = htons(PORT);
 	srv.sin_addr.s_addr = inet_addr("10.1.3.235");
-	// memset(&srv.sin_zero,0,sizeof(srv));
+	memset(&srv.sin_zero, 0, sizeof(srv));
 
 	nStatus = connect(sockfd, (struct sockaddr *)&srv, sizeof(srv)); // connecting...
 	if (nStatus < 0)
@@ -39,8 +39,14 @@ int main()
 	while (1)
 	{
 		system("color 0a");
-		cout << "Enter Expression : " << endl;
+		cout << "Enter Expression And for termination type No : " << endl;
 		fgets(buffer, 255, stdin);
+		if (!strncmp(buffer, "NO", 2)) // comparing string to terminate
+		{
+			cout << "Terminated" << endl;
+			send(sockfd, buffer, strlen(buffer), 0);
+			break;
+		}
 		n = send(sockfd, buffer, strlen(buffer), 0); // sending to server
 		memset(buffer, '\0', 255);
 		if (n < 0)
@@ -51,21 +57,6 @@ int main()
 
 		n = recv(sockfd, buffer, 255, 0);
 		cout << "Answer : " << buffer << endl;
-
-		// n = recv(sockfd, buffer, 255, 0);
-		// cout << buffer << endl;
-		// if (n < 0)
-		// {
-		// 	printf("Error on reading\n");
-		// 	return EXIT_FAILURE;
-		// }
-		// printf("Server : %s", buffer);
-		// memset(buffer, '\0', 255);
-
-		// int i = strncmp("Bye", buffer, 3);
-		// if (i == 0)
-		// 	break;
-
 		memset(buffer, '\0', 255);
 	}
 
